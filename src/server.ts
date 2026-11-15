@@ -12,7 +12,7 @@ export function createMcpServer(
 ): McpServer {
   const token = config.token ?? process.env.APP_API_TOKEN;
   if (!token?.trim()) {
-    throw new Error("Set APP_API_TOKEN to a scoped notes service agent token");
+    throw new Error("Set APP_API_TOKEN to a scoped service agent token");
   }
   const apiUrl = normalizeBaseUrl(
     config.apiUrl ?? process.env.APP_API_URL ?? "http://localhost:3000",

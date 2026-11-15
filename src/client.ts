@@ -52,7 +52,7 @@ export type ApplicationResponse = {
   readonly contentType: string;
 };
 
-/** Small bearer-authenticated client for Application's space API. */
+/** Small bearer-authenticated client for the compatible workspace space API. */
 export class ApplicationClient {
   readonly baseUrl: string;
   readonly #token: string;

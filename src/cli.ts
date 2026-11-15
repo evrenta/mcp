@@ -1,12 +1,11 @@
 import { stdin } from "node:process";
 import { StdioServerTransport } from "@modelcontextprotocol/server/stdio";
-import { brandText } from "./brand.js";
 import { createMcpServer } from "./server.js";
 
 export async function runCli(): Promise<void> {
   const [command] = process.argv.slice(2);
   if (command && ["-h", "--help", "help"].includes(command)) {
-    console.log(`evrenta-mcp — ${brandText("{{appBrandName}} Model Context Protocol server (stdio)")}
+    console.log(`evrenta-mcp — Model Context Protocol server (stdio)
 
 Usage:
   evrenta-mcp          Start the MCP server
@@ -14,9 +13,9 @@ Usage:
   evrenta-mcp --help   Show this help
 
 Required environment:
-  APP_API_TOKEN   Scoped notes service agent token
+  APP_API_TOKEN   Scoped service agent token
 Optional environment:
-  APP_API_URL     Notes service origin URL (default: http://localhost:3000)
+  APP_API_URL     Service origin URL (default: http://localhost:3000)
 `);
     return;
   }

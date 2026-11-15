@@ -1,5 +1,5 @@
 import { createHash } from "node:crypto";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { ApplicationClient } from "./client.js";
 import { registerTools } from "./tools.js";
 
@@ -84,22 +84,18 @@ const validToolArgs: Record<string, Record<string, unknown>> = {
   merge_text: { base: "base", local: "local", remote: "remote" },
 };
 
-afterEach(() => {
-  vi.unstubAllEnvs();
-});
-
 describe("Evrenta MCP tools", () => {
-  it("uses configured product names in agent-facing tool descriptions", () => {
-    vi.stubEnv("APP_BRAND_NAME", "Configured Notes");
-    vi.stubEnv("BOARD_BRAND_NAME", "Configured Boards");
+  it("uses deployment-neutral names in agent-facing descriptions", () => {
     const { tools } = fixture();
 
     expect(tools.get("list_spaces")?.description).toContain(
-      "Configured Notes spaces",
+      "List spaces this API token can access",
     );
     expect(tools.get("list_board_tasks")?.description).toContain(
-      "Configured Boards linked to the current Configured Notes space",
+      "task board linked to this space",
     );
+    expect(tools.get("list_spaces")?.description).not.toContain("{{");
+    expect(tools.get("list_board_tasks")?.description).not.toContain("{{");
   });
 
   it("registers Application content, search, revisions, sharing, and board tools", () => {

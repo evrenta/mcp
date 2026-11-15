@@ -4,7 +4,7 @@
 
 <h1 align="center">Evrenta MCP</h1>
 
-<p align="center"><strong>Connect your AI client to the Notes spaces and linked Boards tasks your agent token allows.</strong></p>
+<p align="center"><strong>Connect your AI client to the workspace spaces and linked task boards your agent token allows.</strong></p>
 
 <p align="center">
   <a href="https://nodejs.org/"><img src="https://img.shields.io/badge/Node.js-24%2B-339933?logo=nodedotjs&logoColor=white" alt="Node.js 24 or later" /></a>
@@ -12,42 +12,40 @@
   <a href="https://modelcontextprotocol.io/"><img src="https://img.shields.io/badge/Protocol-MCP-7158E2.svg" alt="Model Context Protocol" /></a>
 </p>
 
-Evrenta MCP runs on your machine and connects to your Notes service. Your token decides which spaces and actions are available, and Notes checks those permissions on every request.
+Evrenta MCP runs on your machine and connects to a compatible workspace service. The same package can connect to different instances; each client entry supplies that instance’s URL and agent token. The service checks token permissions on every request.
 
 [Quick start](#quick-start) · [Permissions](#permissions) · [Team use](#team-use) · [Troubleshooting](#troubleshooting) · [License](#license)
 
 ## Quick start
 
-You’ll need an Evrenta Notes address, an MCP-compatible AI client, and Node.js 24 or later.
+You’ll need the URL of a compatible instance, an MCP-compatible AI client, and Node.js 24 or later.
 
 ### 1. Create an agent token
 
-In Notes, open **Profile → API tokens → New token**. Choose **Agent — AI and automation**, select the spaces to connect, set an expiry, and copy the token. Notes shows it only once.
+In the target instance, open **Profile → API tokens → New token**. Choose **Agent — AI and automation**, select the spaces to connect, set an expiry, and copy the token. The instance shows it only once.
 
 Start with read access. You can add permissions later if your team wants the AI client to make changes.
 
 ### 2. Add the server to your AI client
 
-Add this entry in the client’s MCP settings. Replace the example URL and token with your own. Keep the token in private client settings or a secret store; don’t commit it to a shared project.
+Add this entry in the client’s MCP settings. Replace the example URL and token with your own. `workspace` is only a local name in the client; you can change it. Keep the token in private client settings or a secret store, and don’t commit it to a shared project.
 
 ```json
 {
   "mcpServers": {
-    "evrenta-notes": {
+    "workspace": {
       "command": "npx",
       "args": ["-y", "@evrenta/mcp"],
       "env": {
-        "APP_API_URL": "https://notes.example.com",
-        "APP_API_TOKEN": "<your-agent-token>",
-        "APP_BRAND_NAME": "Evrenta Notes",
-        "BOARD_BRAND_NAME": "Evrenta Boards"
+        "APP_API_URL": "https://your-instance.example.com",
+        "APP_API_TOKEN": "<your-agent-token>"
       }
     }
   }
 }
 ```
 
-Use your Notes service origin, without a space path. `/api` is optional. Hosted services must use HTTPS; plain HTTP is allowed for local development. The two brand variables are optional and only affect names shown in tool descriptions.
+Use the target instance’s service origin, without a space path. `/api` is optional. Hosted services must use HTTPS; plain HTTP is allowed for local development. Add another `mcpServers` entry with its own URL and token to connect to another instance.
 
 If npm can’t find `@evrenta/mcp` yet, run it from a source checkout:
 
@@ -58,7 +56,7 @@ npm ci
 npm run build
 ```
 
-In your MCP settings, use `node` as the command and the full path to `mcp/dist/index.js` as its argument. Keep the same `env` values shown above.
+In your MCP settings, use `node` as the command and the full path to `mcp/dist/index.js` as its argument. Keep only the `APP_API_URL` and `APP_API_TOKEN` values shown above.
 
 ### 3. Connect and try a search
 
@@ -81,7 +79,7 @@ Grant only what each person needs. Permissions can differ by space.
 | Create or remove snapshots; sync a connected repository | Add `revisions.manage` |
 | Share a page | Add `content.read` and `content.share` |
 | Work with drawing shares | Add the required `drawings.read`, `drawings.write`, or `drawings.share` permissions |
-| View tasks on linked Boards | Add `board.read` |
+| View tasks on a linked task board | Add `board.read` |
 | Create or update linked tasks | Add `board.manage` |
 
 ## Team use
@@ -90,9 +88,9 @@ Give each teammate their own token rather than sharing one. This keeps access sc
 
 Common ways to use the connection:
 
-- **Find information:** Search Notes and ask for the page name along with the answer so a teammate can check the source.
+- **Find information:** Search workspace pages and ask for the page name along with the answer so a teammate can check the source.
 - **Improve documentation:** Ask for a suggested edit first, then allow page updates when appropriate.
-- **Track follow-ups:** List, create, and update tasks on Boards linked to the selected Notes space. These tools cover linked tasks, not the full Boards project-management API.
+- **Track follow-ups:** List, create, and update tasks on the task board linked to the selected space. These tools cover linked tasks, not the full project-management API.
 - **Review changes:** Inspect page history or create a snapshot before a larger edit.
 
 The AI client shows each tool’s inputs and required permissions. Review proposed edits before applying them. Deletes are permanent; sharing a page or drawing can give others access through its link.
@@ -105,7 +103,7 @@ The AI client shows each tool’s inputs and required permissions. Review propos
 | No spaces are listed | Check that the token is active and includes at least one space. |
 | A tool says access is denied | Add the required permission to the token for that space. |
 | A request needs a `spaceId` | Call `list_spaces`, choose the intended space, and pass its ID. |
-| The service URL is rejected | Use the Notes origin, not a space URL; hosted services need HTTPS. |
+| The service URL is rejected | Use the instance origin, not a space URL; hosted services need HTTPS. |
 
 ## License
 

@@ -1,7 +1,6 @@
 import { createHash } from "node:crypto";
 import type { CallToolResult } from "@modelcontextprotocol/server";
 import { z } from "zod";
-import { brandText } from "./brand.js";
 import type { ApplicationClient } from "./client.js";
 import { errorResult, textResult } from "./result.js";
 import {
@@ -80,9 +79,7 @@ export function registerTools(
               .uuid()
               .optional()
               .describe(
-                brandText(
-                  "Application space ID from list_spaces; omit when only one is accessible",
-                ),
+                "Space ID from list_spaces; omit when only one is accessible",
               ),
           })
           .strict()
@@ -90,11 +87,9 @@ export function registerTools(
     server.registerTool(
       name,
       {
-        description: brandText(
-          spaceScoped
-            ? `${description} If the token can access multiple spaces, call list_spaces and pass the selected spaceId.`
-            : description,
-        ),
+        description: spaceScoped
+          ? `${description} If the token can access multiple spaces, call list_spaces and pass the selected spaceId.`
+          : description,
         inputSchema,
       },
       async (rawArgs) => {
@@ -120,7 +115,7 @@ export function registerTools(
 
   add(
     "list_spaces",
-    "List Application spaces this API token can access, with its effective permissions in each space.",
+    "List spaces this API token can access, with its effective permissions in each space.",
     z.object({}).strict(),
     () => client.spaces(),
     false,
@@ -128,7 +123,7 @@ export function registerTools(
 
   add(
     "whoami",
-    "Return the authenticated Application account, this space's safe metadata, and the token's effective permissions.",
+    "Return the authenticated account, this space's safe metadata, and the token's effective permissions.",
     z.object({}).strict(),
     async () => {
       const [accounts, config] = await Promise.all([
@@ -154,7 +149,7 @@ export function registerTools(
 
   add(
     "list_files",
-    "List visible files in the current Application space with content type, size, and permissions.",
+    "List visible files in the current space with content type, size, and permissions.",
     z.object({}).strict(),
     () => client.json("/api/files"),
   );
@@ -246,7 +241,7 @@ export function registerTools(
 
   add(
     "reconcile_file",
-    "Apply a UTF-8 edit against the exact base text. Application merges concurrent edits and returns applied, merged, conflicted, or retry; inspect returned text before another write. This is safer than overwriting when another client may be editing.",
+    "Apply a UTF-8 edit against the exact base text. The service merges concurrent edits and returns applied, merged, conflicted, or retry; inspect returned text before another write. This is safer than overwriting when another client may be editing.",
     z
       .object({
         path: text,
@@ -282,7 +277,7 @@ export function registerTools(
 
   add(
     "lookup_page",
-    "Resolve a Markdown page path to its stable Application page ID.",
+    "Resolve a Markdown page path to its stable page ID.",
     z.object({ path: text }).strict(),
     ({ path }) =>
       client.json(`/api/pages/lookup?${new URLSearchParams({ path })}`),
@@ -290,7 +285,7 @@ export function registerTools(
 
   add(
     "get_page",
-    "Resolve a stable Application page ID to its current path.",
+    "Resolve a stable page ID to its current path.",
     z.object({ id: text }).strict(),
     ({ id }) => client.json(`/api/pages/${encodeURIComponent(id)}`),
   );
@@ -318,14 +313,14 @@ export function registerTools(
 
   add(
     "get_search_status",
-    "Check whether Application's search index is ready and which query modes are available.",
+    "Check whether the search index is ready and which query modes are available.",
     z.object({}).strict(),
     () => client.json("/api/search/status"),
   );
 
   add(
     "search",
-    "Search pages and metadata in this Application space. Results include page, line, excerpt, and match highlights.",
+    "Search pages and metadata in this space. Results include page, line, excerpt, and match highlights.",
     z
       .object({
         query: page,
@@ -341,7 +336,7 @@ export function registerTools(
 
   add(
     "list_file_revisions",
-    "List a file's managed Git revisions. `before` is a revision cursor; limit is clamped by Application to 200.",
+    "List a file's managed Git revisions. `before` is a revision cursor; limit is clamped to 200.",
     z
       .object({
         path: text,
@@ -568,7 +563,7 @@ export function registerTools(
 
   add(
     "list_board_tasks",
-    "List tasks on the {{boardBrandName}} linked to the current {{appBrandName}} space (page 1–1,000,000; limit up to 100). Requires board.read.",
+    "List tasks on the task board linked to this space (page 1–1,000,000; limit up to 100). Requires board.read.",
     z
       .object({
         page: z.number().int().min(1).max(1_000_000).default(1),
@@ -583,7 +578,7 @@ export function registerTools(
 
   add(
     "create_board_task",
-    "Create a task on the {{boardBrandName}} linked to the current {{appBrandName}} space. Requires board.manage. The optional sourcePage is a path in this space.",
+    "Create a task on the task board linked to this space. Requires board.manage. The optional sourcePage is a path in this space.",
     z
       .object({
         title: text.max(500),
@@ -599,7 +594,7 @@ export function registerTools(
 
   add(
     "update_board_task",
-    "Update a task on the {{boardBrandName}} linked to the current {{appBrandName}} space. Set one or more of status, description, assigneeId, or dueDate; use null to clear the assignee or due date. Requires board.manage.",
+    "Update a task on the task board linked to this space. Set one or more of status, description, assigneeId, or dueDate; use null to clear the assignee or due date. Requires board.manage.",
     z
       .object({
         id: text.max(128),
@@ -623,7 +618,7 @@ export function registerTools(
 
   add(
     "merge_text",
-    "Three-way merge text using Application's conflict-aware merge engine. This tool is pure computation and does not change files.",
+    "Three-way merge text with conflict detection. This tool is pure computation and does not change files.",
     z
       .object({
         base: z.string().max(1_000_000),

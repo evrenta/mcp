@@ -23,7 +23,7 @@ export function normalizeBaseUrl(raw: string): string {
     url.search ||
     url.hash
   ) {
-    throw new Error("APP_API_URL must be an HTTP(S) notes service origin");
+    throw new Error("APP_API_URL must be an HTTP(S) workspace service origin");
   }
   if (
     url.protocol === "http:" &&
@@ -36,7 +36,7 @@ export function normalizeBaseUrl(raw: string): string {
   const pathname = url.pathname.replace(/\/+$/, "");
   if (pathname && pathname !== "/api") {
     throw new Error(
-      "APP_API_URL must be the notes service origin, without a space path",
+      "APP_API_URL must be the workspace service origin, without a space path",
     );
   }
   return url.origin;
