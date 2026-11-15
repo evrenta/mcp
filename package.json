@@ -1,0 +1,79 @@
+{
+  "name": "@evrenta/mcp",
+  "version": "0.2.0",
+  "mcpName": "io.github.evrenta/mcp",
+  "description": "MCP server for Evrenta Notes spaces, pages, search, revisions, and Boards tasks",
+  "author": "Stefan Kumarasinghe",
+  "license": "MIT",
+  "homepage": "https://www.npmjs.com/package/@evrenta/mcp",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Evrenta/mcp"
+  },
+  "type": "module",
+  "bin": {
+    "evrenta-mcp": "dist/index.js"
+  },
+  "exports": {
+    ".": {
+      "import": "./dist/server.js",
+      "types": "./dist/server.d.ts"
+    },
+    "./tools": {
+      "types": "./dist/tools.d.ts",
+      "import": "./dist/tools.js"
+    },
+    "./client": {
+      "types": "./dist/client.d.ts",
+      "import": "./dist/client.js"
+    },
+    "./utils": {
+      "types": "./dist/utils.d.ts",
+      "import": "./dist/utils.js"
+    }
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=24"
+  },
+  "keywords": [
+    "ai-agents",
+    "claude",
+    "kanban",
+    "evrenta",
+    "evrenta-mcp",
+    "mcp",
+    "mcp-server",
+    "model-context-protocol",
+    "project-management",
+    "stdio",
+    "tasks"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "prepublishOnly": "npm run build",
+    "dev": "tsx watch src/index.ts",
+    "start": "node dist/index.js",
+    "test": "vitest run --config vitest.config.ts",
+    "test:coverage": "vitest run --config vitest.config.ts --coverage",
+    "typecheck": "tsc --noEmit -p tsconfig.json"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/server": "2.4.0",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.2",
+    "@vitest/coverage-v8": "4.1.12",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2",
+    "vitest": "^4.1.11"
+  }
+}
