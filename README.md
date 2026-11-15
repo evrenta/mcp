@@ -1,10 +1,16 @@
-# Evrenta MCP
+<p align="center">
+  <img src="assets/mascot.knowledge.png" alt="Evrenta’s Knowledge mascot, a waving purple page with connected nodes" width="240" />
+</p>
 
-[![Node.js 24+](https://img.shields.io/badge/Node.js-24%2B-339933?logo=nodedotjs&logoColor=white)](https://nodejs.org/)
-[![MIT License](https://img.shields.io/badge/License-MIT-4051B5.svg)](LICENSE)
-[![Model Context Protocol](https://img.shields.io/badge/Protocol-MCP-7158E2.svg)](https://modelcontextprotocol.io/)
+<h1 align="center">Evrenta MCP</h1>
 
-**Connect your AI client to the Notes spaces and linked Boards tasks your agent token allows.**
+<p align="center"><strong>Connect your AI client to the Notes spaces and linked Boards tasks your agent token allows.</strong></p>
+
+<p align="center">
+  <a href="https://nodejs.org/"><img src="https://img.shields.io/badge/Node.js-24%2B-339933?logo=nodedotjs&logoColor=white" alt="Node.js 24 or later" /></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-4051B5.svg" alt="MIT License" /></a>
+  <a href="https://modelcontextprotocol.io/"><img src="https://img.shields.io/badge/Protocol-MCP-7158E2.svg" alt="Model Context Protocol" /></a>
+</p>
 
 Evrenta MCP runs on your machine and connects to your Notes service. Your token decides which spaces and actions are available, and Notes checks those permissions on every request.
 
