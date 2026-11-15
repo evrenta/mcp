@@ -1,34 +1,28 @@
-# Use Evrenta MCP with your team
+# Evrenta MCP
 
-Evrenta MCP connects an AI client to the Notes spaces your agent token can access. It can find and read pages, help update content, and work with tasks on the Boards linked to those spaces. Access always follows the token’s permissions.
+[![Node.js 24+](https://img.shields.io/badge/Node.js-24%2B-339933?logo=nodedotjs&logoColor=white)](https://nodejs.org/)
+[![MIT License](https://img.shields.io/badge/License-MIT-4051B5.svg)](LICENSE)
+[![Model Context Protocol](https://img.shields.io/badge/Protocol-MCP-7158E2.svg)](https://modelcontextprotocol.io/)
 
-## Get connected
+**Connect your AI client to the Notes spaces and linked Boards tasks your agent token allows.**
+
+Evrenta MCP runs on your machine and connects to your Notes service. Your token decides which spaces and actions are available, and Notes checks those permissions on every request.
+
+[Quick start](#quick-start) · [Permissions](#permissions) · [Team use](#team-use) · [Troubleshooting](#troubleshooting) · [License](#license)
+
+## Quick start
 
 You’ll need an Evrenta Notes address, an MCP-compatible AI client, and Node.js 24 or later.
 
 ### 1. Create an agent token
 
-In Notes, open **Profile → API tokens → New token**. Choose **Agent — AI and automation**, select the spaces this connection needs, choose an expiry, and copy the token.
+In Notes, open **Profile → API tokens → New token**. Choose **Agent — AI and automation**, select the spaces to connect, set an expiry, and copy the token. Notes shows it only once.
 
-For a team, give each person their own token. This keeps access scoped and makes it clear whose permissions are being used. Start with read access; add write access only when the team is ready for the AI client to make changes.
+Start with read access. You can add permissions later if your team wants the AI client to make changes.
 
-| What you want to do | Permissions to grant |
-| --- | --- |
-| Find and read pages | `content.read`, `search.query` |
-| Create or edit pages | Add `content.write` |
-| Delete pages or files | Add `content.delete` |
-| Read revision history | Add `revisions.read` |
-| Create or remove revision snapshots, or sync a repository | Add `revisions.manage` |
-| Share a page | Add `content.share` |
-| Work with drawing shares | Add the needed `drawings.read`, `drawings.write`, or `drawings.share` permissions |
-| View linked Boards tasks | Add `board.read` |
-| Create or update linked Boards tasks | Add `board.manage` |
+### 2. Add the server to your AI client
 
-The token can have different permissions in different spaces. Only select the spaces the person or team needs.
-
-### 2. Add Evrenta MCP to your AI client
-
-Add this server entry in the client’s MCP settings. Put the token in the client’s private settings or secret store. Don’t commit a config containing the token to a shared repository.
+Add this entry in the client’s MCP settings. Replace the example URL and token with your own. Keep the token in private client settings or a secret store; don’t commit it to a shared project.
 
 ```json
 {
@@ -47,31 +41,66 @@ Add this server entry in the client’s MCP settings. Put the token in the clien
 }
 ```
 
-Replace the example URL with your Notes address. Use the service origin only, without a space path; `/api` is optional. Hosted services must use HTTPS. `APP_BRAND_NAME` and `BOARD_BRAND_NAME` are optional and only change the names shown in tool descriptions.
+Use your Notes service origin, without a space path. `/api` is optional. Hosted services must use HTTPS; plain HTTP is allowed for local development. The two brand variables are optional and only affect names shown in tool descriptions.
 
-If the package is not available from npm yet, clone this repository, run `npm ci` and `npm run build`, then set the client command to `node` and its argument to the full path to `dist/index.js` in your checkout.
+If npm can’t find `@evrenta/mcp` yet, run it from a source checkout:
 
-### 3. Connect and try it
+```sh
+git clone https://github.com/Evrenta/mcp.git
+cd mcp
+npm ci
+npm run build
+```
 
-Restart or reload the AI client. Ask it to call `list_spaces` first. Then try a small read-only request, such as:
+In your MCP settings, use `node` as the command and the full path to `mcp/dist/index.js` as its argument. Keep the same `env` values shown above.
+
+### 3. Connect and try a search
+
+Restart or reload the AI client, then ask it to call `list_spaces`. Try a read-only request, for example:
 
 > Search our onboarding pages for the equipment return process and show me the most relevant page.
 
-If the token can access one space, the server selects it automatically. If it can access several, choose the right space from `list_spaces` and pass its `spaceId` to the next tool call.
+If the token can access one space, it is selected automatically. If it can access more than one, choose a `spaceId` from `list_spaces` for each space-specific request.
 
-## How teams can use it
+## Permissions
 
-- **Find information:** Search Notes pages and ask for a short answer with the page name so teammates can check the source.
-- **Draft or update content:** Ask for a proposed change first. Grant `content.write` when the team is ready to let the client apply edits.
-- **Track follow-ups:** List, create, or update tasks on the Boards linked to the selected Notes space. These tools cover linked tasks; they aren’t the full Boards project-management API.
-- **Review changes:** Use revision tools to inspect history or create a snapshot before a larger edit.
+Grant only what each person needs. Permissions can differ by space.
 
-The server’s tool descriptions explain required inputs and permissions. Review changes before applying them. Delete actions are permanent, and sharing a page or drawing can give other people access through a link.
+| Team task | Permissions |
+| --- | --- |
+| Find and read pages | `content.read`, `search.query` |
+| Create or edit pages | Add `content.write` |
+| Delete pages or files | Add `content.delete` |
+| Read revision history | Add `revisions.read` |
+| Create or remove snapshots; sync a connected repository | Add `revisions.manage` |
+| Share a page | Add `content.read` and `content.share` |
+| Work with drawing shares | Add the required `drawings.read`, `drawings.write`, or `drawings.share` permissions |
+| View tasks on linked Boards | Add `board.read` |
+| Create or update linked tasks | Add `board.manage` |
 
-## If something doesn’t connect
+## Team use
 
-- **The server doesn’t appear:** Check that Node.js 24 or later is installed, then restart the MCP client.
-- **No spaces are listed:** Check that the token is active and was created for at least one space.
-- **A tool reports access denied:** Ask the space owner to add the needed permission to your token.
-- **Several spaces are listed:** Pass the intended `spaceId` with the tool call.
-- **The URL is rejected:** Use the Notes origin, not a space URL. For a hosted service, use HTTPS.
+Give each teammate their own token rather than sharing one. This keeps access scoped to their account and spaces. Start with search and read access; add write or sharing permissions only when your team is ready.
+
+Common ways to use the connection:
+
+- **Find information:** Search Notes and ask for the page name along with the answer so a teammate can check the source.
+- **Improve documentation:** Ask for a suggested edit first, then allow page updates when appropriate.
+- **Track follow-ups:** List, create, and update tasks on Boards linked to the selected Notes space. These tools cover linked tasks, not the full Boards project-management API.
+- **Review changes:** Inspect page history or create a snapshot before a larger edit.
+
+The AI client shows each tool’s inputs and required permissions. Review proposed edits before applying them. Deletes are permanent; sharing a page or drawing can give others access through its link.
+
+## Troubleshooting
+
+| What you see | What to check |
+| --- | --- |
+| The MCP server doesn’t appear | Confirm Node.js 24+ is installed, then restart the client. |
+| No spaces are listed | Check that the token is active and includes at least one space. |
+| A tool says access is denied | Add the required permission to the token for that space. |
+| A request needs a `spaceId` | Call `list_spaces`, choose the intended space, and pass its ID. |
+| The service URL is rejected | Use the Notes origin, not a space URL; hosted services need HTTPS. |
+
+## License
+
+MIT © Stefan Kumarasinghe. See [LICENSE](LICENSE).
