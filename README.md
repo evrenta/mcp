@@ -26,7 +26,17 @@ In the target instance, open **Profile → API tokens → New token**. Choose **
 
 Start with read access. You can add permissions later if your team wants the AI client to make changes.
 
-### 2. Add the server to your AI client
+### 2. Install the package (optional)
+
+When the npm package is available, you can install it globally:
+
+```sh
+npm install -g @evrenta/mcp
+```
+
+The AI client configuration below uses `npx`, so a separate global install is optional.
+
+### 3. Add the server to your AI client
 
 Add this entry in the client’s MCP settings. Replace the example URL and token with your own. `workspace` is only a local name in the client; you can change it. Keep the token in private client settings or a secret store, and don’t commit it to a shared project.
 
@@ -58,7 +68,7 @@ npm run build
 
 In your MCP settings, use `node` as the command and the full path to `mcp/dist/index.js` as its argument. Keep only the `APP_API_URL` and `APP_API_TOKEN` values shown above.
 
-### 3. Connect and try a search
+### 4. Connect and try a search
 
 Restart or reload the AI client, then ask it to call `list_spaces`. Try a read-only request, for example:
 
