@@ -1,6 +1,6 @@
 {
   "name": "@evrenta/mcp",
-  "version": "0.2.0",
+  "version": "0.1.0",
   "mcpName": "io.github.evrenta/mcp",
   "description": "MCP server for workspace pages, search, revisions, sharing, and linked task boards",
   "author": "Stefan Kumarasinghe",

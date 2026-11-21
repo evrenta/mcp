@@ -6,12 +6,12 @@
     "url": "https://github.com/Evrenta/mcp",
     "source": "github"
   },
-  "version": "0.2.0",
+  "version": "0.1.0",
   "packages": [
     {
       "registryType": "npm",
       "identifier": "@evrenta/mcp",
-      "version": "0.2.0",
+      "version": "0.1.0",
       "transport": {
         "type": "stdio"
       },
